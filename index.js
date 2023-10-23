@@ -28,49 +28,57 @@ async function run() {
 
     const donorsInfo = client.db("DonorsInfo");
     const donorInfo = donorsInfo.collection("donorInfo");
-    
+
     app.get('/:email', async (req, res) => {
-        const email=req.params.email
-        const query = { email: email };
-        const cursor = donorInfo.find(query);
-        const result= await cursor.toArray()
-        res.send(result)
-      })
-    
-    
-    app.post('/profile', async (req,res)=>{ 
-        const newDonor=req.body 
-        const result = await donorInfo.insertOne(newDonor);
-        res.send(result)
-        
+      const email = req.params.email
+      const query = { email: email };
+      const cursor = donorInfo.find(query);
+      const result = await cursor.toArray()
+      res.send(result)
     })
 
-    app.put('/update', async (req,res) =>{
-        
-        const updateDonor=req.body 
-        const email=updateDonor.email
-        const query = { email: email };
-        const options = { upsert: true };
-        const updateDoc = {
-            $set: {
-              userName: updateDonor.userName,
-              bloodGroup: updateDonor.bloodGroup,
-              address: updateDonor.address,
-              email: updateDonor.email,
-              phone: updateDonor.phone
-            },
-          };
+    app.get('/donorlist/:bG', async (req, res) => {
+      const bloodGroup = req.params.bG
+      const query = { bloodGroup: bloodGroup };
+      const cursor = donorInfo.find(query);
+      const result = await cursor.toArray()
+      res.send(result)
+    })
 
-        const result = await donorInfo.updateOne(query, updateDoc, options);
-        res.send(result)
+
+    app.post('/profile', async (req, res) => {
+      const newDonor = req.body
+      const result = await donorInfo.insertOne(newDonor);
+      res.send(result)
 
     })
 
-    app.delete('/:email',async (req,res)=>{
-        const email=req.params.email
-        const query = { email: email };
-        const result = await donorInfo.deleteOne(query);
-        res.send(result)
+    app.put('/update', async (req, res) => {
+
+      const updateDonor = req.body
+      const email = updateDonor.email
+      const query = { email: email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          userName: updateDonor.userName,
+          bloodGroup: updateDonor.bloodGroup,
+          address: updateDonor.address,
+          email: updateDonor.email,
+          phone: updateDonor.phone
+        },
+      };
+
+      const result = await donorInfo.updateOne(query, updateDoc, options);
+      res.send(result)
+
+    })
+
+    app.delete('/:email', async (req, res) => {
+      const email = req.params.email
+      const query = { email: email };
+      const result = await donorInfo.deleteOne(query);
+      res.send(result)
 
     })
 
@@ -88,12 +96,14 @@ run().catch(console.dir);
 
 
 app.get('/', (req, res) => {
-    res.send('server is running')
-  })
-
-  
+  res.send('server is running')
+})
 
 
- app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
-  })
+
+
+
+
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`)
+})
